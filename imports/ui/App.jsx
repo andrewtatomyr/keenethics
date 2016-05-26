@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
 
-// Messages publication
+// Messages collection
 import { /*UserParams,*/ Messages } from '../api/api.js';
 
 // Message template
@@ -116,7 +116,7 @@ class App extends Component {
               <input
                 type="text"
                 ref="textInput"
-                placeholder="Type to add new tasks"
+                placeholder="Type new message here..."
               />
             </form> : ""
           }
