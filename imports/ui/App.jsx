@@ -99,19 +99,23 @@ class App extends Component {
         <header>
           <h1>Messaging</h1>
 
-          <label className="hide-completed">
+          <div className="profile-wrapper">
+            { this.props.currentUser ?
+              <span className="toggle-profile" onClick={this.toggleProfile.bind(this)}>
+                &#9998;
+              </span> : ""
+            }
+          </div>
+
+          <div className="profile-wrapper">
+            <AccountsUIWrapper />
+          </div>
+
+          <div className="location-wrapper">
             <select ref="locationInput" defaultValue="0" onChange={this.updateLocation.bind(this)}>
               {this.renderLocations()}
             </select>
-          </label>
-
-          <AccountsUIWrapper />
-
-          { this.props.currentUser ?
-            <a href="#" className="toggle-profile" onClick={this.toggleProfile.bind(this)}>
-              profile
-            </a> : ""
-          }
+          </div>
 
           { this.state.showProfile ?
             <form className="profile" onSubmit={this.updateProfile.bind(this)} >
@@ -124,7 +128,7 @@ class App extends Component {
           }
 
           { this.props.currentUser && this.props.currentUser.location ?
-            <form className="new-task" onSubmit={this.handleSubmit.bind(this)} >
+            <form className="new-message" onSubmit={this.handleSubmit.bind(this)} >
               <input
                 type="text"
                 ref="textInput"
