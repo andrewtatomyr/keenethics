@@ -4,7 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
 
 // Messages collection
-import { /*UserParams,*/ Messages } from '../api/api.js';
+import { Messages } from '../api/api.js';
 
 // Message template
 import Message from './Message.jsx';
@@ -23,16 +23,6 @@ class App extends Component {
       showProfile: false,
       currentLocation: 0,
     };
-  }
-
-
-  // Inserting new message
-  handleSubmit(event) {
-    event.preventDefault();
-
-    const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
-    Meteor.call('messages.insert', text, this.props.currentUser.location);
-    ReactDOM.findDOMNode(this.refs.textInput).value = "";
   }
 
   toggleProfile() {
@@ -65,16 +55,30 @@ class App extends Component {
   }
 
   updateLocation() {
-    Meteor.call("user.updateLocation", this.refs.locationInput.selectedIndex);
+    //console.log(this.refs.locationInput.selectedIndex); // -
+    this.setState({currentLocation: this.refs.locationInput.selectedIndex}); // refreshing the current location state
+    //if (this.props.currentUser) Meteor.call("user.updateLocation", this.refs.locationInput.selectedIndex); // refreshing the current location in db
+    console.log("updateLocation", this.state.currentLocation); // -
   }
 
   // Updating <select> element
   componentDidUpdate() {
-    ReactDOM.findDOMNode(this.refs.locationInput).selectedIndex = this.props.currentUser ? this.props.currentUser.location : 0; // this.refs.locationInput.selectedIndex; // ?
+    ReactDOM.findDOMNode(this.refs.locationInput).selectedIndex = this.state.currentLocation; //this.props.currentUser ? this.props.currentUser.location : this.state.currentLocation; // first try to find whether user has been somewhere located xor set location by state
+    //this.setState({currentLocation: this.refs.locationInput.selectedIndex}); // refreshing the current location state
+    console.log("componentDidUpdate", this.state.currentLocation); // -
+  }
+
+  // Inserting new message
+  handleSubmit(event) {
+    event.preventDefault();
+
+    const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
+    Meteor.call('messages.insert', text, this.state.currentLocation); //, this.props.currentUser.location);
+    ReactDOM.findDOMNode(this.refs.textInput).value = "";
   }
 
   renderMessages() {
-    let filteredMessages = this.props.messages.filter((message) => message.location === this.props.currentUser.location);
+    let filteredMessages = this.props.messages.filter((message) => message.location === this.state.currentLocation);
 
     return filteredMessages.map((message) => (
       <Message key={message._id} message={message} />
@@ -86,6 +90,7 @@ class App extends Component {
       <div className="container">
         <header>
           <h1>Messaging</h1>
+          ::{this.state.currentLocation}::
 
           <label className="hide-completed">
             <select ref="locationInput" defaultValue="0" onChange={this.updateLocation.bind(this)}>
