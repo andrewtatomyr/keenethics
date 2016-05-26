@@ -28,7 +28,7 @@ Meteor.methods({
     });
   },
 
-  /*
+  
   "user.updateLocation"(location) {
     Meteor.users.update({_id: this.userId}, {
       $set: {
@@ -36,7 +36,7 @@ Meteor.methods({
       }
     });
   },
-  */
+
 
   "messages.insert"(text, location) {
     check(text, String);

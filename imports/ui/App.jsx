@@ -57,7 +57,7 @@ class App extends Component {
   updateLocation() {
     //console.log(this.refs.locationInput.selectedIndex); // -
     this.setState({currentLocation: this.refs.locationInput.selectedIndex}); // refreshing the current location state
-    //if (this.props.currentUser) Meteor.call("user.updateLocation", this.refs.locationInput.selectedIndex); // refreshing the current location in db
+    if (this.props.currentUser) Meteor.call("user.updateLocation", this.refs.locationInput.selectedIndex); // refreshing the current location in db
     console.log("updateLocation", this.state.currentLocation); // -
   }
 
@@ -65,6 +65,14 @@ class App extends Component {
   componentDidUpdate() {
     ReactDOM.findDOMNode(this.refs.locationInput).selectedIndex = this.state.currentLocation; //this.props.currentUser ? this.props.currentUser.location : this.state.currentLocation; // first try to find whether user has been somewhere located xor set location by state
     //this.setState({currentLocation: this.refs.locationInput.selectedIndex}); // refreshing the current location state
+
+
+    if ( // this condition has added to prevent recursion after component updating
+      this.props.currentUser &&
+      this.state.currentLocation !== this.props.currentUser.location
+    ) {
+      this.setState({currentLocation: this.props.currentUser.location});
+    }
     console.log("componentDidUpdate", this.state.currentLocation); // -
   }
 
