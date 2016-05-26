@@ -28,7 +28,6 @@ Meteor.methods({
     });
   },
 
-  
   "user.updateLocation"(location) {
     Meteor.users.update({_id: this.userId}, {
       $set: {
@@ -37,15 +36,12 @@ Meteor.methods({
     });
   },
 
-
   "messages.insert"(text, location) {
     check(text, String);
 
     if (!this.userId) {
       throw new Meteor.Error('not-authorized');
     }
-
-    //let location = .user
 
     Messages.insert({
       text,

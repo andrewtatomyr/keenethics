@@ -55,25 +55,25 @@ class App extends Component {
   }
 
   updateLocation() {
-    //console.log(this.refs.locationInput.selectedIndex); // -
-    this.setState({currentLocation: this.refs.locationInput.selectedIndex}); // refreshing the current location state
-    if (this.props.currentUser) Meteor.call("user.updateLocation", this.refs.locationInput.selectedIndex); // refreshing the current location in db
-    console.log("updateLocation", this.state.currentLocation); // -
+    // Refreshing the current location state
+    this.setState({currentLocation: this.refs.locationInput.selectedIndex});
+
+    // Refreshing the current location in db
+    if (this.props.currentUser) Meteor.call("user.updateLocation", this.refs.locationInput.selectedIndex);
   }
 
-  // Updating <select> element
+  // Updating the <select> element
   componentDidUpdate() {
-    ReactDOM.findDOMNode(this.refs.locationInput).selectedIndex = this.state.currentLocation; //this.props.currentUser ? this.props.currentUser.location : this.state.currentLocation; // first try to find whether user has been somewhere located xor set location by state
-    //this.setState({currentLocation: this.refs.locationInput.selectedIndex}); // refreshing the current location state
+    ReactDOM.findDOMNode(this.refs.locationInput).selectedIndex = this.state.currentLocation;
 
-
-    if ( // this condition has added to prevent recursion after component updating
+    // This condition has added to prevent recursion after component updating
+    if (
       this.props.currentUser &&
       this.state.currentLocation !== this.props.currentUser.location
     ) {
       this.setState({currentLocation: this.props.currentUser.location});
     }
-    console.log("componentDidUpdate", this.state.currentLocation); // -
+
   }
 
   // Inserting new message
@@ -81,7 +81,7 @@ class App extends Component {
     event.preventDefault();
 
     const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
-    Meteor.call('messages.insert', text, this.state.currentLocation); //, this.props.currentUser.location);
+    Meteor.call('messages.insert', text, this.state.currentLocation);
     ReactDOM.findDOMNode(this.refs.textInput).value = "";
   }
 
@@ -98,7 +98,6 @@ class App extends Component {
       <div className="container">
         <header>
           <h1>Messaging</h1>
-          ::{this.state.currentLocation}::
 
           <label className="hide-completed">
             <select ref="locationInput" defaultValue="0" onChange={this.updateLocation.bind(this)}>
@@ -144,7 +143,6 @@ class App extends Component {
   }
 
 }
-
 
 App.propTypes = {
   messages: PropTypes.array.isRequired,
