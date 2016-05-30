@@ -6,26 +6,17 @@ export const Messages = new Mongo.Collection("messages");
 
 if (Meteor.isServer) {
 
-
   Meteor.publish("messages", (location) => {
-    //console.log(Meteor.user());//-
     return Messages.find({location});
   });
-
-
 
   Meteor.publish("userParams", function () {
     console.log("_id: ",this.userId);
     return Meteor.users.find({_id: this.userId}, {fields: {name: 1}});
   });
 
-
-
 }
 
-
-
-//*
 FlowRouter.route('/messages/:location', {
   name: 'messages',
   action: function(params) {
@@ -34,8 +25,6 @@ FlowRouter.route('/messages/:location', {
 
   }
 });
-//*/
-
 
 Meteor.methods({
 
@@ -47,16 +36,6 @@ Meteor.methods({
       }
     });
   },
-
-  /*
-  "user.updateLocation"(location) {
-    Meteor.users.update({_id: this.userId}, {
-      $set: {
-        location
-      }
-    });
-  },
-  */
 
   "messages.insert"(text, location) {
     check(text, String);

@@ -21,7 +21,6 @@ class App extends Component {
 
     this.state = {
       showProfile: false,
-      ///currentLocation: 0,
     };
   }
 
@@ -55,33 +54,13 @@ class App extends Component {
   }
 
   updateLocation() {
-    // Refreshing the current location state
-    ///this.setState({currentLocation: this.refs.locationInput.selectedIndex});
-
-
     FlowRouter.go("/messages/" + this.refs.locationInput.selectedIndex);
-
-    // Refreshing the current location in db
-    ///if (this.props.currentUser) Meteor.call("user.updateLocation", this.refs.locationInput.selectedIndex);
   }
 
   // Updating the <select> element
   componentDidUpdate() {
     let location = FlowRouter.getParam('location');
     ReactDOM.findDOMNode(this.refs.locationInput).selectedIndex = location;
-
-    // This condition has added to prevent recursion after component updating
-    /*
-
-    if (
-      this.props.currentUser &&
-      this.state.currentLocation !== this.props.currentUser.location
-    ) {
-      this.setState({currentLocation: this.props.currentUser.location});
-    }
-
-    */
-
   }
 
   // Inserting new message
@@ -92,15 +71,12 @@ class App extends Component {
 
     let location = parseInt(FlowRouter.getParam('location'));
 
-    Meteor.call('messages.insert', text,  location /*this.state.currentLocation*/);
+    Meteor.call('messages.insert', text,  location);
     ReactDOM.findDOMNode(this.refs.textInput).value = "";
   }
 
   renderMessages() {
-    console.log(this.props.messages); // -
-    //let filteredMessages = this.props.messages.filter((message) => message.location === this.state.currentLocation);
-
-    return /*filteredM*/this.props.messages.map((message) => (
+    return this.props.messages.map((message) => (
       <Message key={message._id} message={message} />
     ));
   }
@@ -127,7 +103,7 @@ class App extends Component {
           </div>
 
           <div className="location-wrapper">
-            <select ref="locationInput" defaultValue={location} onChange={this.updateLocation.bind(this)}>
+            <select ref="locationInput" onChange={this.updateLocation.bind(this)}>
               {this.renderLocations()}
             </select>
           </div>
@@ -142,7 +118,7 @@ class App extends Component {
             </form> : ""
           }
 
-          { this.props.currentUser && /*this.props.currentUser.location*/ location ?
+          { this.props.currentUser && location ?
             <form className="new-message" onSubmit={this.handleSubmit.bind(this)} >
               <input
                 type="text"
@@ -171,14 +147,11 @@ App.propTypes = {
 export default createContainer(() => {
 
   let location = parseInt(FlowRouter.getParam('location'));
-  console.log("loc::", location);//-
 
   let messagesHandle = Meteor.subscribe('messages', location);
   Meteor.subscribe('userParams');
 
-  //if (messagesHandle.ready())
   return {
-
     messages: Messages.find({}, { sort: { createdAt: -1 } }).fetch(),
     currentUser: Meteor.user(),
   };
